@@ -1,68 +1,178 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
-## Available Scripts
+# Contador en React Context
 
-In the project directory, you can run:
+[![Build Status](https://travis-ci.org/uqbar-project/eg-contador-react-context.svg?branch=master)](https://travis-ci.org/uqbar-project/eg-contador-react-context)
 
-### `npm start`
+![video](readme_src/demo.gif)
 
-Runs the app in the development mode.<br />
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+# La aplicación
 
-The page will reload if you make edits.<br />
-You will also see any lint errors in the console.
+El ejemplo consiste en un simple contador numérico, al que le podemos incrementar o decrementar su valor de uno en uno. Para ayudar a entender el funcionamiento de React Context, incorporamos un _log_ que mostrará cada operación de suma o resta que haya pedido el usuario, con la opción de poder borrarlo.
 
-### `npm test`
+# React Context
 
-Launches the test runner in the interactive watch mode.<br />
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+El API de React Context permite unificar el estado entre los componentes de una aplicación.
 
-### `npm run build`
+## Breve introducción a React Context
 
-Builds the app for production to the `build` folder.<br />
-It correctly bundles React in production mode and optimizes the build for the best performance.
+![image](readme_src/context.jpeg)
 
-The build is minified and the filenames include the hashes.<br />
-Your app is ready to be deployed!
+React Context agrega como conceptos:
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+- el **Context** que es simplemente la instancia de ReactContext, que n
 
-### `npm run eject`
+- el **Provider** con el vamos a encerrar a todos nuestros componentes que queremos que esten escuchando nuestro estado global
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+- el **Consumer** que nos permite consumir los datos globales, pero los hooks de react nos da una funcion que nos hace todo mas facil :tada:
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
 
-Instead, it will copy all the configuration files and the transitive dependencies (Webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+## Los componentes
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+Tenemos tres componentes en nuestra aplicación:
 
-## Learn More
+- **Contador:** el label que muestra el valor y los dos botones para sumar o restar ese valor
+- **LogContador:** el container general que genera la tabla y su encabezado, y trabaja con la lista de logs de las operaciones que se van produciendo
+- **LogRow:** el componente que sabe mostrar un log dentro de una tabla
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+![image](readme_src/componentes.png)
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+## Nuestro estado compartido
 
-### Code Splitting
+En el context vamos a definir como estado compartido el valor numérico actual y la lista de logs:
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/code-splitting
+archivo _src/context/Context.js_
 
-### Analyzing the Bundle Size
+```javascript
+export const Context = createContext()
+```
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size
+## Definiendo nuestro propio Provider
 
-### Making a Progressive Web App
+Tendremos tres acciones: subir un valor (INCREMENT), bajar un valor (DECREMENT), ambas generan un nuevo log y eliminar un log (DELETE_LOG).
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app
+Nuestro componente provider, no es algo mas que un componente react tambien, el cual mantiene y maneja el estado de nuestra app.
 
-### Advanced Configuration
+archivo _src/context/Context.js_
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/advanced-configuration
+```javascript
+export const Provider = ({ children }) => {
+    const [count, setCount] = useState(0)
+    const [logs, setLogs] = useState([])
+    const value = {
+        count,
+        logs,
+        decrement: () => {
+            const newLogs = [...logs]
+            newLogs.push(new Log("DECREMENT"))
+            setLogs(newLogs)
+            setCount(count - 1)
+        },
+        increment: () => {
+            const newLogs = [...logs]
+            newLogs.push(new Log("INCREMENT"))
+            setLogs(newLogs)
+            setCount(count + 1)
+        },
+        deleteLog: (logToDelete) => {
+            const newLogs = logs.filter((log) => logToDelete.id !== log.id)
+            setLogs(newLogs)
+        }
+    }
+    return (
+        <Context.Provider value={value}>
+            {children}
+        </Context.Provider>
+    )
+}
+```
 
-### Deployment
+## Enlazando las acciones con cada componente
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/deployment
+Para mapear las acciones y estado a los componentes deberiamos usar un **Consumer**,pero gracias a la magia de react, nos regala una funcion que se llama `useContext` a la cual le debemos pasar por argumento el **Context** que queremos usar
 
-### `npm run build` fails to minify
+Mapearemos entonces en el componente contador:
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
+- como **state del context** la propiedad count (no nos interesan los logs)
+- como **acciones**, las acciones para subir o bajar el contador (increment y decrement )
+
+```js
+const { count, decrement,increment } = useContext(Context)
+
+```
+
+En el componente LogContador mapearemos:
+
+- como **state del context** la propiedad logs
+- como **accion**, la funcion de borrar un log que recibe por parametro el log..
+
+```js
+const { deleteLog, logs } = useContext(Context)
+
+```
+
+# Testing
+
+Tenemos un archivo `src/setupTests.js`, que nos sirve para configurar todos los test de nuestro ecosistema (cosa burocratica de react + enzyme)
+
+```javascript
+import 'jest-enzyme'
+import { configure } from 'enzyme'
+import Adapter from 'enzyme-adapter-react-16'
+configure({ adapter: new Adapter() })
+```
+
+El archivo de test es fácil configurarlo, Veamos:
+```javascript
+let wrapperContador
+
+beforeEach(() => {
+  wrapperContador = mount(<App />)
+})
+```
+
+El primer test es sencillo:
+
+```javascript
+it('el contador inicialmente está en 0', () => {
+  const label = wrapperContador.find('Label')
+  expect(label.text()).toBe("0")
+})
+```
+
+Dado que en lugar de la función shallow() estamos usando la función mount(), tenemos el componente HTML cargado en profundidad (no necesitamos forzar los componentes hijos con el mensaje dive()). Entonces podemos buscar el Label que contiene el valor inicialmente en 0 (un String, salvo que el lector lo quiera convertir a un número).
+
+El segundo test no es tan unitario: prueba que se presiona el botón +, eso mapea contra props.increment() que dispara la acción increment() hacia el store, que devuelve un nuevo estado y eso termina generando el render de la vista, por lo tanto esperamos que en el Label ahora esté el valor 1:
+
+```javascript
+it('cuando el usuario presiona el botón + el contador pasa a estar en 1', () => {
+  const btnPlus = wrapperContador.find('button#plus')
+  btnPlus.simulate('click')
+  const label = wrapperContador.find('Label')
+  expect(label.text()).toBe("1")
+})
+```
+
+Para chequear que al presionar el botón + tenemos un nuevo log,debemos ir a buscar los logs renderizados y chequear la cantidad
+
+```javascript
+it('cuando el usuario presiona el botón + se agrega un log', () => {
+  const btnPlus = wrapperContador.find('button#plus')
+  btnPlus.simulate('click')
+  expect(wrapperContador.find('LogRow')).toHaveLength(1)
+})
+```
+
+Y el último test es una prueba end-to-end bastante exhaustiva: el usuario presiona el botón +, eso además de modificar el valor agrega un log. Entonces podemos presionar el botón "Eliminar log" para luego chequear que la lista de logs queda vacía:
+
+```javascript
+it('cuando el usuario presiona el botón Delete Log se elimina un log', () => {
+  const btnPlus = wrapperContador.find('button#plus')
+  btnPlus.simulate('click')
+  expect(wrapperContador.find('LogRow')).toHaveLength(1)
+  const actualIndex = Log.getLastIndex() - 1
+  wrapperContador.find(`button#delete_${actualIndex}`).simulate('click')
+  expect(wrapperContador.find('LogRow')).toHaveLength(0)
+})
+})
+```
+
