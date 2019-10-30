@@ -1,33 +1,78 @@
-import React, { useState, createContext } from 'react'
+import React, { createContext } from 'react'
 import { Log } from '../domain/log'
 export const Context = createContext()
 
-export const Provider = ({ children }) => {
-    const [count, setCount] = useState(0)
-    const [logs, setLogs] = useState([])
-    const value = {
-        count,
-        logs,
-        decrement: () => {
-            const newLogs = [...logs]
-            newLogs.push(new Log('DECREMENT'))
-            setLogs(newLogs)
-            setCount(count - 1)
-        },
-        increment: () => {
-            const newLogs = [...logs]
-            newLogs.push(new Log('INCREMENT'))
-            setLogs(newLogs)
-            setCount(count + 1)
-        },
-        deleteLog: (logToDelete) => {
-            const newLogs = logs.filter((log) => logToDelete.id !== log.id)
-            setLogs(newLogs)
-        }
+export class Provider extends React.Component {
+    state = {
+        logs: [],
+        count: 0
     }
-    return (
-        <Context.Provider value={value}>
-            {children}
-        </Context.Provider>
-    )
+    decrement = () => {
+        const newLogs = [...this.state.logs]
+        newLogs.push(new Log('DECREMENT'))
+        this.setState({
+            logs: newLogs,
+            count: this.state.count - 1
+        })
+    }
+    increment = () => {
+        const newLogs = [...this.state.logs]
+        newLogs.push(new Log('INCREMENT'))
+        this.setState({
+            logs: newLogs,
+            count: this.state.count + 1
+        })
+    }
+    deleteLog = (logToDelete) => {
+        const newLogs = this.state.logs.filter((log) => logToDelete.id !== log.id)
+        this.setState({
+            logs: newLogs
+        })
+    }
+    render() {
+        const value = {
+            count: this.state.count,
+            logs: this.state.logs,
+            decrement: this.decrement,
+            increment: this.increment,
+            deleteLog: this.deleteLog
+        }
+        return (
+            <Context.Provider value={value}>
+                {this.props.children}
+            </Context.Provider>
+
+        )
+    }
 }
+
+// EJEMPLO DE COMO HACERLO CON HOOKS
+// export const Provider = ({ children }) => {
+//     const [count, setCount] = useState(0)
+//     const [logs, setLogs] = useState([])
+//     const value = {
+//         count,
+//         logs,
+//         decrement: () => {
+//             const newLogs = [...logs]
+//             newLogs.push(new Log('DECREMENT'))
+//             setLogs(newLogs)
+//             setCount(count - 1)
+//         },
+//         increment: () => {
+//             const newLogs = [...logs]
+//             newLogs.push(new Log('INCREMENT'))
+//             setLogs(newLogs)
+//             setCount(count + 1)
+//         },
+//         deleteLog: (logToDelete) => {
+//             const newLogs = logs.filter((log) => logToDelete.id !== log.id)
+//             setLogs(newLogs)
+//         }
+//     }
+//     return (
+//         <Context.Provider value={value}>
+//             {children}
+//         </Context.Provider>
+//     )
+// }
