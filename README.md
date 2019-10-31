@@ -19,11 +19,11 @@ El API de React Context permite unificar el estado entre los componentes de una 
 
 React Context agrega como conceptos:
 
-- el **Context** que es simplemente la instancia de ReactContext, que n
+- el **Context** que es simplemente la instancia de ReactContext
 
-- el **Provider** con el vamos a encerrar a todos nuestros componentes que queremos que esten escuchando nuestro estado global
+- el **Provider** con el vamos a encerrar a todos nuestros componentes que queremos que estén escuchando nuestro estado global
 
-- el **Consumer** que nos permite consumir los datos globales, pero los hooks de react nos da una funcion que nos hace todo mas facil :tada:
+- el **Consumer** que nos permite consumir los datos globales, pero los hooks de react nos dan una función que nos hace todo más facil :tada:
 
 
 ## Los componentes

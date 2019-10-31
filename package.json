@@ -6,12 +6,12 @@
     "react": "^16.11.0",
     "react-dom": "^16.11.0",
     "react-scripts": "3.2.0",
-    "react-bootstrap": "^0.32.1"
+    "react-bootstrap": "^0.33.0"
   },
   "devDependencies": {
-    "jest-enzyme": "^6.0.1",
-    "enzyme": "^3.9.0",
-    "enzyme-adapter-react-16": "^1.12.1"
+    "enzyme": "^3.10.0",
+    "enzyme-adapter-react-16": "^1.15.1",
+    "jest-enzyme": "^7.1.2"
   },
   "scripts": {
     "start": "react-scripts start",

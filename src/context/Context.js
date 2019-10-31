@@ -8,18 +8,14 @@ export class Provider extends React.Component {
         count: 0
     }
     decrement = () => {
-        const newLogs = [...this.state.logs]
-        newLogs.push(new Log('DECREMENT'))
         this.setState({
-            logs: newLogs,
+            logs: this.state.logs.concat(new Log('DECREMENT')),
             count: this.state.count - 1
         })
     }
     increment = () => {
-        const newLogs = [...this.state.logs]
-        newLogs.push(new Log('INCREMENT'))
         this.setState({
-            logs: newLogs,
+            logs: this.state.logs.concat(new Log('INCREMENT')),
             count: this.state.count + 1
         })
     }
