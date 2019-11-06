@@ -28,12 +28,12 @@ const LogContador = () => {
 }
 export default LogContador
 
-const LogRow = (props) =>
+const LogRow = ({ deleteLog, log }) =>
     <tr>
-        <td>{props.log.when.toLocaleString('es-AR')}</td>
-        <td>{props.log.type}</td>
+        <td>{log.when.toLocaleString('es-AR')}</td>
+        <td>{log.type}</td>
         <td align="center">
-            <Button bsStyle="danger" id={'delete_' + props.log.id} onClick={() => props.deleteLog(props.log)} >
+            <Button bsStyle="danger" data-testid={`button_deleteLog_${log.id}`} onClick={() => deleteLog(log)} >
                 <Glyphicon glyph="erase" />
             </Button>
         </td>

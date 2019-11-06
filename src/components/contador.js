@@ -11,11 +11,11 @@ const Contador = () => {
             </Panel.Heading>
             <Panel.Body>
                 <h3>
-                    <Button bsStyle="primary" id="minus" onClick={decrement}>-</Button>
+                    <Button bsStyle="primary" data-testid="button_minus" onClick={decrement}>-</Button>
                     &nbsp;&nbsp;
                     <Label bsStyle="success">{count}</Label>
                     &nbsp;&nbsp;
-                    <Button bsStyle="primary" id="plus" onClick={increment}>+</Button>
+                    <Button bsStyle="primary" data-testid="button_plus" onClick={increment}>+</Button>
                 </h3>
             </Panel.Body>
         </Panel>

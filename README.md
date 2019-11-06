@@ -61,18 +61,14 @@ export class Provider extends React.Component {
         count: 0
     }
     decrement = () => {
-        const newLogs = [...this.state.logs]
-        newLogs.push(new Log('DECREMENT'))
         this.setState({
-            logs: newLogs,
+            logs: this.state.logs.concat(new Log('DECREMENT')),
             count: this.state.count - 1
         })
     }
     increment = () => {
-        const newLogs = [...this.state.logs]
-        newLogs.push(new Log('INCREMENT'))
         this.setState({
-            logs: newLogs,
+            logs: this.state.logs.concat(new Log('INCREMENT')),
             count: this.state.count + 1
         })
     }
@@ -135,58 +131,86 @@ import Adapter from 'enzyme-adapter-react-16'
 configure({ adapter: new Adapter() })
 ```
 
-El archivo de test es fácil configurarlo, Veamos:
+La idea seria generar un par de funciones auxiliares que nos permitan dejar los tests simples:
 ```javascript
-let wrapperContador
-
-beforeEach(() => {
-  wrapperContador = mount(<App />)
-})
+const getLabel = (componente) => componente.find('Label')
+const getButtonPlus = (componente) => componente.find('[data-testid="button_plus"]').at(0)
+const getButtonMinus = (componente) => componente.find('[data-testid="button_minus"]').at(0)
+const getLog = (componente) => componente.find('LogRow')
+const getDeleteLogButton = (componente, id) => componente.find(`[data-testid="button_deleteLog_${id}"]`).at(0)
 ```
+
+¿Y por qué usamos el `data-testid` y no el `id` de html ?  :thinking:
+
+Si usamos el id estamos acoplando un selector de css a nuestros tests e incluso podría ser que este tenga otro valor a futuro, en cambio `data-testid` es un atributo específicamente para los tests y no hay probabilidad que cambie.
+
+¿Qué es ese `at(0)` en las funciones auxiliares ?
+
+Lamentablemente bootstrap tiene un bug y renderiza erróneamente los `<Button/>`, nos muestra 2 `data-testid` dentro del html
 
 El primer test es sencillo:
 
 ```javascript
 it('el contador inicialmente está en 0', () => {
-  const label = wrapperContador.find('Label')
-  expect(label.text()).toBe("0")
+  const wrapperContador = mount(<App />)
+  expect(getLabel(wrapperContador).text()).toBe('0')
 })
 ```
 
 Dado que en lugar de la función shallow() estamos usando la función mount(), tenemos el componente HTML cargado en profundidad (no necesitamos forzar los componentes hijos con el mensaje dive()). Entonces podemos buscar el Label que contiene el valor inicialmente en 0 (un String, salvo que el lector lo quiera convertir a un número).
 
-El segundo test no es tan unitario: prueba que se presiona el botón +, eso mapea contra props.increment() que dispara la acción increment() hacia el store, que devuelve un nuevo estado y eso termina generando el render de la vista, por lo tanto esperamos que en el Label ahora esté el valor 1:
+El segundo test no es tan unitario: prueba que se presiona el botón +, eso mapea contra props.increment() que dispara la acción increment() hacia el store, que devuelve un nuevo estado y eso termina generando el render de la vista, por lo tanto esperamos que en el Label ahora esté el valor 1 y que se muestre un nuevo log:
 
 ```javascript
-it('cuando el usuario presiona el botón + el contador pasa a estar en 1', () => {
-  const btnPlus = wrapperContador.find('button#plus')
-  btnPlus.simulate('click')
-  const label = wrapperContador.find('Label')
-  expect(label.text()).toBe("1")
+describe('cuando el usuario presiona el botón +', () => {
+  let wrapperContador
+  beforeEach(() => {
+    wrapperContador = mount(<App />)
+    getButtonPlus(wrapperContador).simulate('click')
+  })
+
+  it('se agrega un log', () => {
+    expect(wrapperContador.find('LogRow')).toHaveLength(1)
+  })
+
+  it('el contador pasa a estar en 1', () => {
+    expect(getLabel(wrapperContador).text()).toBe('1')
+  })
 })
 ```
 
-Para chequear que al presionar el botón + tenemos un nuevo log,debemos ir a buscar los logs renderizados y chequear la cantidad
+Lo mismo hacemos para decrementar:
 
 ```javascript
-it('cuando el usuario presiona el botón + se agrega un log', () => {
-  const btnPlus = wrapperContador.find('button#plus')
-  btnPlus.simulate('click')
-  expect(wrapperContador.find('LogRow')).toHaveLength(1)
+describe('cuando el usuario presiona el botón -', () => {
+  let wrapperContador
+  beforeEach(() => {
+    wrapperContador = mount(<App />)
+    getButtonMinus(wrapperContador).simulate('click')
+  })
+
+  it('se agrega un log', () => {
+    expect(wrapperContador.find('LogRow')).toHaveLength(1)
+  })
+
+  it('el contador pasa a estar en -1', () => {
+    expect(getLabel(wrapperContador).text()).toBe('-1')
+  })
 })
 ```
+
+Hacemos el uso de `beforeEach` para tener un diferente componente en cada `it`, así no tenemos estado compartido entre los tests
 
 Y el último test es una prueba end-to-end bastante exhaustiva: el usuario presiona el botón +, eso además de modificar el valor agrega un log. Entonces podemos presionar el botón "Eliminar log" para luego chequear que la lista de logs queda vacía:
 
 ```javascript
 it('cuando el usuario presiona el botón Delete Log se elimina un log', () => {
-  const btnPlus = wrapperContador.find('button#plus')
-  btnPlus.simulate('click')
-  expect(wrapperContador.find('LogRow')).toHaveLength(1)
-  const actualIndex = Log.getLastIndex() - 1
-  wrapperContador.find(`button#delete_${actualIndex}`).simulate('click')
-  expect(wrapperContador.find('LogRow')).toHaveLength(0)
-})
+  const wrapperContador = mount(<App />)
+  const actualIndex = Log.getLastIndex()
+  getButtonPlus(wrapperContador).simulate('click')
+  expect(getLog(wrapperContador)).toHaveLength(1)
+  getDeleteLogButton(wrapperContador, actualIndex).simulate('click')
+  expect(getLog(wrapperContador)).toHaveLength(0)
 })
 ```
 

@@ -43,6 +43,7 @@ export class Provider extends React.Component {
 }
 
 // EJEMPLO DE COMO HACERLO CON HOOKS
+// import React, { createContext,useState } from 'react'
 // export const Provider = ({ children }) => {
 //     const [count, setCount] = useState(0)
 //     const [logs, setLogs] = useState([])
