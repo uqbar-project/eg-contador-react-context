@@ -1,59 +1,71 @@
+import { fireEvent, render } from '@testing-library/react'
 import React from 'react'
-import { mount } from 'enzyme'
+
 import App from './App'
+import { Provider } from './context/Context'
 import { Log } from './domain/log'
 
+// https://www.polvara.me/posts/mocking-context-with-react-testing-library/
 
-
-const getLabel = (componente) => componente.find('Label')
-const getButtonPlus = (componente) => componente.find('[data-testid="button_plus"]').at(0)
-const getButtonMinus = (componente) => componente.find('[data-testid="button_minus"]').at(0)
-const getLog = (componente) => componente.find('LogRow')
-const getDeleteLogButton = (componente, id) => componente.find(`[data-testid="button_deleteLog_${id}"]`).at(0)
-
-it('el contador inicialmente está en 0', () => {
-  const wrapperContador = mount(<App />)
-  // console.log(wrapperContador.debug()) para ver por que tenemos 2 data-testid
-  expect(getLabel(wrapperContador).text()).toBe('0')
+test('el contador inicialmente está en 0', () => {
+  const { getByTestId } = render(
+    <Provider>
+      <App />
+    </Provider>
+  )
+  expect(getByTestId('contador')).toHaveTextContent('0')
 })
 
-describe('cuando el usuario presiona el botón -', () => {
-  let wrapperContador
-  beforeEach(() => {
-    wrapperContador = mount(<App />)
-    getButtonMinus(wrapperContador).simulate('click')
-  })
-
-  it('se agrega un log', () => {
-    expect(wrapperContador.find('LogRow')).toHaveLength(1)
-  })
-
-  it('el contador pasa a estar en -1', () => {
-    expect(getLabel(wrapperContador).text()).toBe('-1')
-  })
+test('si se presiona el botón +, se agrega un log', () => {
+  const { getByTestId, getAllByTestId } = render(
+    <Provider>
+      <App />
+    </Provider>
+  )
+  fireEvent.click(getByTestId('button_plus'))
+  expect(getAllByTestId('LogRow')).toHaveLength(1)
 })
 
-describe('cuando el usuario presiona el botón +', () => {
-  let wrapperContador
-  beforeEach(() => {
-    wrapperContador = mount(<App />)
-    getButtonPlus(wrapperContador).simulate('click')
-  })
-
-  it('se agrega un log', () => {
-    expect(wrapperContador.find('LogRow')).toHaveLength(1)
-  })
-
-  it('el contador pasa a estar en 1', () => {
-    expect(getLabel(wrapperContador).text()).toBe('1')
-  })
+test('si se presiona el botón +, el contador pasa a estar en 1', () => {
+  const { getByTestId } = render(
+    <Provider>
+      <App />
+    </Provider>
+  )
+  fireEvent.click(getByTestId('button_plus'))
+  expect(getByTestId('contador')).toHaveTextContent('1')
 })
 
-it('cuando el usuario presiona el botón Delete Log se elimina un log', () => {
-  const wrapperContador = mount(<App />)
+test('si se presiona el botón -, se agrega un log', () => {
+  const { getByTestId, getAllByTestId } = render(
+    <Provider>
+      <App />
+    </Provider>
+  )
+  fireEvent.click(getByTestId('button_minus'))
+  expect(getAllByTestId('LogRow')).toHaveLength(1)
+})
+
+test('si se presiona el botón -, el contador pasa a estar en -1', () => {
+  const { getByTestId } = render(
+    <Provider>
+      <App />
+    </Provider>
+  )
+  fireEvent.click(getByTestId('button_minus'))
+  expect(getByTestId('contador')).toHaveTextContent('-1')
+})
+
+
+test('cuando el usuario presiona el botón Delete Log se elimina un log', () => {
+  const { queryAllByTestId, getByTestId } = render(
+    <Provider>
+      <App />
+    </Provider>
+  )
   const actualIndex = Log.getLastIndex()
-  getButtonPlus(wrapperContador).simulate('click')
-  expect(getLog(wrapperContador)).toHaveLength(1)
-  getDeleteLogButton(wrapperContador, actualIndex).simulate('click')
-  expect(getLog(wrapperContador)).toHaveLength(0)
+  fireEvent.click(getByTestId('button_plus'))
+  expect(queryAllByTestId('LogRow')).toHaveLength(1)
+  fireEvent.click(getByTestId('button_deleteLog_' + actualIndex))
+  expect(queryAllByTestId('LogRow')).toHaveLength(0)
 })

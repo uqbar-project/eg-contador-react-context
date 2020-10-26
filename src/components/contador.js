@@ -20,7 +20,7 @@ const Contador = () => {
       </div>
       <div>
         <Button primary data-testid="button_minus" onClick={decrement}>-</Button>
-        <Label circular color={color(count)} size="huge">{count}</Label>
+        <Label data-testid="contador" circular color={color(count)} size="huge">{count}</Label>
         <Button secondary data-testid="button_plus" onClick={increment}>+</Button>
       </div>
     </Container>

@@ -33,7 +33,7 @@ export default LogContador
 const Logdiv = ({ deleteLog, log }) =>
     <Table.Row>
         <Table.Cell>{log.when.toLocaleString('es-AR')}</Table.Cell>
-        <Table.Cell>{log.type}</Table.Cell>
+        <Table.Cell data-testid="LogRow">{log.type}</Table.Cell>
         <Table.Cell textAlign="center">
             <Button data-testid={`button_deleteLog_${log.id}`} color="red" onClick={() => deleteLog(log)} icon >
                 <Icon name="erase" />
