@@ -1,42 +1,48 @@
+import PropTypes from 'prop-types'
 import React, { useContext } from 'react'
-import { Panel, Table, Button, Glyphicon } from 'react-bootstrap/lib'
+import { Button, Container, Icon, Table } from 'semantic-ui-react'
+
 import { Context } from '../context/Context'
 
 const LogContador = () => {
     const { deleteLog, logs } = useContext(Context)
     return (
-        <Panel>
-            <Panel.Heading>
-                Log de acciones
-            </Panel.Heading>
-            <Panel.Body>
-                <Table striped bordered condensed hover>
-                    <thead>
-                        <tr>
-                            <th>Cuándo</th>
-                            <th>Acción</th>
-                            <th />
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {logs.map((log) => <LogRow log={log} key={log.id} deleteLog={deleteLog} />)}
-                    </tbody>
+        <Container>
+            <div>
+                <h3>
+                    Log de acciones
+                </h3>
+            </div>
+            <div>
+                <Table celled striped>
+                    <Table.Header>
+                        <Table.Row>
+                            <Table.HeaderCell>Cuándo</Table.HeaderCell>
+                            <Table.HeaderCell>Acción</Table.HeaderCell>
+                            <Table.HeaderCell></Table.HeaderCell>
+                        </Table.Row>
+                    </Table.Header>
+                    {logs.map((log) => <Logdiv log={log} key={log.id} deleteLog={deleteLog} />)}
                 </Table>
-            </Panel.Body>
-        </Panel>
+            </div>
+        </Container>
     )
 }
 export default LogContador
 
-const LogRow = ({ deleteLog, log }) =>
-    <tr>
-        <td>{log.when.toLocaleString('es-AR')}</td>
-        <td>{log.type}</td>
-        <td align="center">
-            <Button bsStyle="danger" data-testid={`button_deleteLog_${log.id}`} onClick={() => deleteLog(log)} >
-                <Glyphicon glyph="erase" />
+const Logdiv = ({ deleteLog, log }) =>
+    <Table.Row>
+        <Table.Cell>{log.when.toLocaleString('es-AR')}</Table.Cell>
+        <Table.Cell>{log.type}</Table.Cell>
+        <Table.Cell textAlign="center">
+            <Button data-testid={`button_deleteLog_${log.id}`} color="red" onClick={() => deleteLog(log)} icon >
+                <Icon name="erase" />
             </Button>
-        </td>
-    </tr>
+        </Table.Cell>
+    </Table.Row>
 
 
+Logdiv.propTypes = {
+    deleteLog: PropTypes.node,
+    log: PropTypes.node,
+}

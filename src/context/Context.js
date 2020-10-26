@@ -1,8 +1,12 @@
+import PropTypes from 'prop-types'
 import React, { createContext } from 'react'
+
 import { Log } from '../domain/log'
+
 export const Context = createContext()
 
 export class Provider extends React.Component {
+    static propTypes = { children: PropTypes.node.isRequired }
     state = {
         logs: [],
         count: 0
@@ -41,6 +45,7 @@ export class Provider extends React.Component {
         )
     }
 }
+
 
 // EJEMPLO DE COMO HACERLO CON HOOKS
 // import React, { createContext,useState } from 'react'
