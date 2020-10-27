@@ -3,17 +3,17 @@
 
 [![Build Status](https://travis-ci.org/uqbar-project/eg-contador-react-context.svg?branch=master)](https://travis-ci.org/uqbar-project/eg-contador-react-context)
 
-![video](readme_src/demo.gif)
+![video](readme_src/demo2.gif)
 
-# La aplicación
+## La aplicación
 
 El ejemplo consiste en un simple contador numérico, al que le podemos incrementar o decrementar su valor de uno en uno. Para ayudar a entender el funcionamiento de React Context, incorporamos un _log_ que mostrará cada operación de suma o resta que haya pedido el usuario, con la opción de poder borrarlo.
 
-# React Context
+## React Context
 
 El API de React Context permite unificar el estado entre los componentes de una aplicación.
 
-## Breve introducción a React Context
+### Breve introducción a React Context
 
 ![image](readme_src/context.jpeg)
 
@@ -34,7 +34,7 @@ Tenemos tres componentes en nuestra aplicación:
 - **LogContador:** el container general que genera la tabla y su encabezado, y trabaja con la lista de logs de las operaciones que se van produciendo
 - **LogRow:** el componente que sabe mostrar un log dentro de una tabla
 
-![image](readme_src/componentes.png)
+![image](readme_src/componentes2.png)
 
 ## Nuestro estado compartido
 
@@ -42,15 +42,13 @@ En el context vamos a definir como estado compartido el valor numérico actual y
 
 archivo _src/context/Context.js_
 
-```javascript
+```js
 export const Context = createContext()
 ```
 
 ## Definiendo nuestro propio Provider
 
-Tendremos tres acciones: subir un valor (INCREMENT), bajar un valor (DECREMENT), ambas generan un nuevo log y eliminar un log (DELETE_LOG).
-
-Nuestro componente provider, no es algo mas que un componente react tambien, el cual mantiene y maneja el estado de nuestra app.
+Tendremos tres acciones: subir un valor, bajar un valor (ambas generan un nuevo log) y eliminar un log. Nuestro componente provider es simplemente un componente react, encargado de mantenery manejar el estado de nuestra app.
 
 archivo _src/context/Context.js_
 
@@ -96,19 +94,48 @@ export class Provider extends React.Component {
 }
 ```
 
+Recordemos que `this.props.children` permite definir componentes React hijos asociados a nuestro Provider, que simplemente los muestra (es una especie de **template method**).
+
+```js
+const App = () => (
+  <Provider >
+    <Contador />
+    <LogContador />
+  </Provider>
+)
+```
+
 ## Enlazando las acciones con cada componente
 
-Para mapear las acciones y estado a los componentes deberiamos usar un **Consumer**,pero gracias a la magia de react, nos regala una funcion que se llama `useContext` a la cual le debemos pasar por argumento el **Context** que queremos usar
+Para mapear las acciones y estado a los componentes deberiamos usar un **Consumer**. Al igual que para los casos de `useState` y `useEffect`, React Context trae una función que se llama `useContext` a la cual le debemos pasar por argumento el **Context** que queremos usar. 
+
+### Componente Contador
 
 Mapearemos entonces en el componente contador:
 
 - como **state del context** la propiedad count (no nos interesan los logs)
-- como **acciones**, las acciones para subir o bajar el contador (increment y decrement )
+- como **acciones**, las acciones para subir o bajar el contador (increment y decrement)
 
 ```js
-const { count, decrement,increment } = useContext(Context)
-
+const { count, decrement, increment } = useContext(Context)
 ```
+
+Entonces podemos usar libremente en nuestra función render las referencias count, increment y decrement:
+
+```js
+  return (
+    <Container textAlign="center">
+      ...
+      <div>
+        <Button primary data-testid="button_minus" onClick={decrement}>-</Button>
+        <Label data-testid="contador" circular color={color(count)} size="huge">{count}</Label>
+        <Button secondary data-testid="button_plus" onClick={increment}>+</Button>
+      </div>
+    </Container>
+  )
+```
+
+### Componente LogContador
 
 En el componente LogContador mapearemos:
 
@@ -117,100 +144,103 @@ En el componente LogContador mapearemos:
 
 ```js
 const { deleteLog, logs } = useContext(Context)
-
 ```
 
-# Testing
+El lector puede ver cómo el botón Eliminar llama a la función `deleteLog` y cómo se reciben los logs para renderizar cada LogRow.
 
-Tenemos un archivo `src/setupTests.js`, que nos sirve para configurar todos los test de nuestro ecosistema (cosa burocratica de react + enzyme)
+## Testing
 
-```javascript
+### Configuración
+
+Anteriormente el framework Enzyme (testeo unitario de React) requería configurar un adaptador para el Context en el archivo `src/setupTests.js`:
+
+```js
 import 'jest-enzyme'
 import { configure } from 'enzyme'
 import Adapter from 'enzyme-adapter-react-16'
 configure({ adapter: new Adapter() })
 ```
 
-La idea seria generar un par de funciones auxiliares que nos permitan dejar los tests simples:
-```javascript
-const getLabel = (componente) => componente.find('Label')
-const getButtonPlus = (componente) => componente.find('[data-testid="button_plus"]').at(0)
-const getButtonMinus = (componente) => componente.find('[data-testid="button_minus"]').at(0)
-const getLog = (componente) => componente.find('LogRow')
-const getDeleteLogButton = (componente, id) => componente.find(`[data-testid="button_deleteLog_${id}"]`).at(0)
-```
+Afortunadamente esto no es necesario con `react-testing-library`.
 
-¿Y por qué usamos el `data-testid` y no el `id` de html ?  :thinking:
+### Tests sobre el contador
 
-Si usamos el id estamos acoplando un selector de css a nuestros tests e incluso podría ser que este tenga otro valor a futuro, en cambio `data-testid` es un atributo específicamente para los tests y no hay probabilidad que cambie.
+Hablaremos de los tests más interesantes, el resto pueden consultarse en [App.test.js](./src/App.test.js). Veamos por ejemplo, cómo simulamos que al presionar el botón **+**
 
-¿Qué es ese `at(0)` en las funciones auxiliares ?
+- por un lado sube el valor del contador
+- por otro lado se genera una nueva fila en el log
 
-Lamentablemente bootstrap tiene un bug y renderiza erróneamente los `<Button/>`, nos muestra 2 `data-testid` dentro del html
+```js
+test('si se presiona el botón +, se agrega un log', () => {
+  const { getByTestId, getAllByTestId } = render(
+    <Provider>
+      <App />
+    </Provider>
+  )
+  fireEvent.click(getByTestId('button_plus'))
+  expect(getAllByTestId('LogRow')).toHaveLength(1)
+})
 
-El primer test es sencillo:
-
-```javascript
-it('el contador inicialmente está en 0', () => {
-  const wrapperContador = mount(<App />)
-  expect(getLabel(wrapperContador).text()).toBe('0')
+test('si se presiona el botón +, el contador pasa a estar en 1', () => {
+  const { getByTestId } = render(
+    <Provider>
+      <App />
+    </Provider>
+  )
+  fireEvent.click(getByTestId('button_plus'))
+  expect(getByTestId('contador')).toHaveTextContent('1')
 })
 ```
 
-Dado que en lugar de la función shallow() estamos usando la función mount(), tenemos el componente HTML cargado en profundidad (no necesitamos forzar los componentes hijos con el mensaje dive()). Entonces podemos buscar el Label que contiene el valor inicialmente en 0 (un String, salvo que el lector lo quiera convertir a un número).
+Estos tests no son tan unitarios: prueba que se presiona el botón +, eso dispara la función increment(), lo que devuelve un nuevo estado y eso termina generando el render de la vista, por lo tanto esperamos que en el Label ahora esté el valor 1 y que se muestre un nuevo log.
 
-El segundo test no es tan unitario: prueba que se presiona el botón +, eso mapea contra props.increment() que dispara la acción increment() hacia el store, que devuelve un nuevo estado y eso termina generando el render de la vista, por lo tanto esperamos que en el Label ahora esté el valor 1 y que se muestre un nuevo log:
+Fíjense que elegimos repetir las dos líneas de código que forman parte del Arrange / Act en ambos tests.
 
-```javascript
-describe('cuando el usuario presiona el botón +', () => {
-  let wrapperContador
+- por un lado, queremos mantener ambos tests separados, porque están probando distintos componentes (no es una buena idea tener un solo test con los dos expect porque pertenecen a casos de prueba diferentes)
+- por otra parte, envolver esas líneas en una función la "alejaría" lo que luego necesitamos preguntar: `getAllByTestId`, `getByTestId` tendrían que ser devueltas por esa función, oscureciendo un poco el entendimiento:
+
+```js
+describe('si se presiona el botón -', () => {
+  let resultApp
+
   beforeEach(() => {
-    wrapperContador = mount(<App />)
-    getButtonPlus(wrapperContador).simulate('click')
+    resultApp = render(
+      <Provider>
+        <App />
+      </Provider>
+    )
+    fireEvent.click(resultApp.getByTestId('button_minus'))
   })
 
-  it('se agrega un log', () => {
-    expect(wrapperContador.find('LogRow')).toHaveLength(1)
+  test('se agrega un log', () => {
+    const { getAllByTestId } = resultApp
+    expect(getAllByTestId('LogRow')).toHaveLength(1)
   })
 
-  it('el contador pasa a estar en 1', () => {
-    expect(getLabel(wrapperContador).text()).toBe('1')
-  })
-})
-```
-
-Lo mismo hacemos para decrementar:
-
-```javascript
-describe('cuando el usuario presiona el botón -', () => {
-  let wrapperContador
-  beforeEach(() => {
-    wrapperContador = mount(<App />)
-    getButtonMinus(wrapperContador).simulate('click')
-  })
-
-  it('se agrega un log', () => {
-    expect(wrapperContador.find('LogRow')).toHaveLength(1)
-  })
-
-  it('el contador pasa a estar en -1', () => {
-    expect(getLabel(wrapperContador).text()).toBe('-1')
+  test('el contador pasa a estar en -1', () => {
+    const { getByTestId } = resultApp
+    expect(getByTestId('contador')).toHaveTextContent('-1')
   })
 })
 ```
 
-Hacemos el uso de `beforeEach` para tener un diferente componente en cada `it`, así no tenemos estado compartido entre los tests
+En definitiva, aquí hay un _trade off_ entre cierta repetición y la legibilidad del test mismo. Por el momento, dado que son solo dos líneas, nos quedamos con la idea original.
+
+### Delete del log
 
 Y el último test es una prueba end-to-end bastante exhaustiva: el usuario presiona el botón +, eso además de modificar el valor agrega un log. Entonces podemos presionar el botón "Eliminar log" para luego chequear que la lista de logs queda vacía:
 
-```javascript
-it('cuando el usuario presiona el botón Delete Log se elimina un log', () => {
-  const wrapperContador = mount(<App />)
+```js
+test('cuando el usuario presiona el botón Delete Log se elimina un log', () => {
+  const { queryAllByTestId, getByTestId } = render(
+    <Provider>
+      <App />
+    </Provider>
+  )
   const actualIndex = Log.getLastIndex()
-  getButtonPlus(wrapperContador).simulate('click')
-  expect(getLog(wrapperContador)).toHaveLength(1)
-  getDeleteLogButton(wrapperContador, actualIndex).simulate('click')
-  expect(getLog(wrapperContador)).toHaveLength(0)
+  fireEvent.click(getByTestId('button_plus'))
+  expect(queryAllByTestId('LogRow')).toHaveLength(1)
+  fireEvent.click(getByTestId('button_deleteLog_' + actualIndex))
+  expect(queryAllByTestId('LogRow')).toHaveLength(0)
 })
 ```
-
