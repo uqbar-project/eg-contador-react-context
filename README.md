@@ -252,4 +252,3 @@ test('cuando el usuario presiona el botón Delete Log se elimina un log', () => 
 ## Material relacionado
 
 - [Context - documentación oficial de React](https://es.reactjs.org/docs/context.html)
-- []
