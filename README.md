@@ -9,6 +9,10 @@
 
 El ejemplo consiste en un simple contador numérico, al que le podemos incrementar o decrementar su valor de uno en uno. Para ayudar a entender el funcionamiento de React Context, incorporamos un _log_ que mostrará cada operación de suma o resta que haya pedido el usuario, con la opción de poder borrarlo.
 
+## Framework de UI CSS
+
+Antes de comenzar con los conceptos más salientes, la UI fue hecha con los componentes que provee [Semantic UI React](https://react.semantic-ui.com/).
+
 ## React Context
 
 El API de React Context permite unificar el estado entre los componentes de una aplicación.
@@ -244,3 +248,8 @@ test('cuando el usuario presiona el botón Delete Log se elimina un log', () => 
   expect(queryAllByTestId('LogRow')).toHaveLength(0)
 })
 ```
+
+## Material relacionado
+
+- [Context - documentación oficial de React](https://es.reactjs.org/docs/context.html)
+- []
