@@ -10,6 +10,8 @@ const color = (valor) => {
 
 const Contador = () => {
   const { count, decrement, increment } = useContext(Context)
+  // para usarlo en un componente como clase, se puede ver 
+  // https://medium.com/noders/manejo-de-estado-con-context-y-hooks-en-react-7adfc7a740a3
 
   return (
     <Container textAlign="center">

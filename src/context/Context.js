@@ -6,48 +6,48 @@ import { Log } from '../domain/log'
 export const Context = createContext()
 
 export class Provider extends React.Component {
-    static propTypes = { children: PropTypes.node.isRequired }
-    state = {
-        logs: [],
-        count: 0
+  static propTypes = { children: PropTypes.node.isRequired }
+  state = {
+    logs: [],
+    count: 0
+  }
+  decrement = () => {
+    this.setState({
+      logs: this.state.logs.concat(new Log('DECREMENT')),
+      count: this.state.count - 1
+    })
+  }
+  increment = () => {
+    this.setState({
+      logs: this.state.logs.concat(new Log('INCREMENT')),
+      count: this.state.count + 1
+    })
+  }
+  deleteLog = (logToDelete) => {
+    const newLogs = this.state.logs.filter((log) => logToDelete.id !== log.id)
+    this.setState({
+      logs: newLogs
+    })
+  }
+  render() {
+    const value = {
+      count: this.state.count,
+      logs: this.state.logs,
+      decrement: this.decrement,
+      increment: this.increment,
+      deleteLog: this.deleteLog
     }
-    decrement = () => {
-        this.setState({
-            logs: this.state.logs.concat(new Log('DECREMENT')),
-            count: this.state.count - 1
-        })
-    }
-    increment = () => {
-        this.setState({
-            logs: this.state.logs.concat(new Log('INCREMENT')),
-            count: this.state.count + 1
-        })
-    }
-    deleteLog = (logToDelete) => {
-        const newLogs = this.state.logs.filter((log) => logToDelete.id !== log.id)
-        this.setState({
-            logs: newLogs
-        })
-    }
-    render() {
-        const value = {
-            count: this.state.count,
-            logs: this.state.logs,
-            decrement: this.decrement,
-            increment: this.increment,
-            deleteLog: this.deleteLog
-        }
-        return (
-            <Context.Provider value={value}>
-                {this.props.children}
-            </Context.Provider>
+    return (
+      <Context.Provider value={value}>
+        {this.props.children}
+      </Context.Provider>
 
-        )
-    }
+    )
+  }
 }
 
 
-// EJEMPLO DE COMO HACERLO CON HOOKS
+// EJEMPLO DE COMO HACERLO CON COMPONENTES FUNCIONALES
 // import React, { createContext,useState } from 'react'
 // export const Provider = ({ children }) => {
 //     const [count, setCount] = useState(0)
