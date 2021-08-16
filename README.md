@@ -1,7 +1,7 @@
 
 # Contador en React Context
 
-[![Build Status](https://travis-ci.org/uqbar-project/eg-contador-react-context.svg?branch=master)](https://travis-ci.org/uqbar-project/eg-contador-react-context)
+[![Build React App](https://github.com/uqbar-project/eg-contador-react-context/actions/workflows/build.yml/badge.svg?branch=master)](https://github.com/uqbar-project/eg-contador-react-context/actions/workflows/build.yml) ![coverage](./badges/coverage/coverage.svg)
 
 ![video](readme_src/demo2.gif)
 
