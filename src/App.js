@@ -7,11 +7,11 @@ import Contador from './components/contador'
 import LogContador from './components/logContador'
 import { Provider } from './context/Context'
 
-const App = () => (
+const App = () => 
   <Provider >
     <Contador />
     <LogContador />
   </Provider>
-)
+
 
 export default App

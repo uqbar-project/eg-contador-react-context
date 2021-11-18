@@ -1,7 +1,7 @@
 
 # Contador en React Context
 
-[![Build Status](https://travis-ci.org/uqbar-project/eg-contador-react-context.svg?branch=master)](https://travis-ci.org/uqbar-project/eg-contador-react-context)
+[![Build React App](https://github.com/uqbar-project/eg-contador-react-context/actions/workflows/build.yml/badge.svg?branch=master)](https://github.com/uqbar-project/eg-contador-react-context/actions/workflows/build.yml) ![coverage](./badges/coverage/coverage.svg)
 
 ![video](readme_src/demo2.gif)
 
@@ -52,7 +52,7 @@ export const Context = createContext()
 
 ## Definiendo nuestro propio Provider
 
-Tendremos tres acciones: subir un valor, bajar un valor (ambas generan un nuevo log) y eliminar un log. Nuestro componente provider es simplemente un componente react, encargado de mantenery manejar el estado de nuestra app.
+Tendremos tres acciones: subir un valor, bajar un valor (ambas generan un nuevo log) y eliminar un log. Nuestro componente provider es simplemente un componente react, encargado de mantener y manejar el estado de nuestra app.
 
 archivo _src/context/Context.js_
 
@@ -153,19 +153,6 @@ const { deleteLog, logs } = useContext(Context)
 El lector puede ver cómo el botón Eliminar llama a la función `deleteLog` y cómo se reciben los logs para renderizar cada LogRow.
 
 ## Testing
-
-### Configuración
-
-Anteriormente el framework Enzyme (testeo unitario de React) requería configurar un adaptador para el Context en el archivo `src/setupTests.js`:
-
-```js
-import 'jest-enzyme'
-import { configure } from 'enzyme'
-import Adapter from 'enzyme-adapter-react-16'
-configure({ adapter: new Adapter() })
-```
-
-Afortunadamente esto no es necesario con `react-testing-library`.
 
 ### Tests sobre el contador
 
