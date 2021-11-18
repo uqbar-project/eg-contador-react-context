@@ -5,7 +5,7 @@ import { Button, Container, Icon, Table } from 'semantic-ui-react'
 import { Context } from '../context/Context'
 
 const LogContador = () => {
-    const { deleteLog, logs } = useContext(Context)
+    const { logs } = useContext(Context)
     return (
         <Container>
             <div>
@@ -22,7 +22,7 @@ const LogContador = () => {
                             <Table.HeaderCell></Table.HeaderCell>
                         </Table.Row>
                     </Table.Header>
-                    {logs.map((log) => <Logdiv log={log} key={log.id} deleteLog={deleteLog} />)}
+                    {logs.map((log) => <Logdiv log={log} key={log.id} />)}
                 </Table>
             </div>
         </Container>
@@ -30,8 +30,10 @@ const LogContador = () => {
 }
 export default LogContador
 
-const Logdiv = ({ deleteLog, log }) =>
-    <Table.Row>
+const Logdiv = ({ log }) => {
+    const { deleteLog } = useContext(Context)
+
+    return <Table.Row>
         <Table.Cell>{log.when.toLocaleString('es-AR')}</Table.Cell>
         <Table.Cell data-testid="LogRow">{log.type}</Table.Cell>
         <Table.Cell textAlign="center">
@@ -40,6 +42,7 @@ const Logdiv = ({ deleteLog, log }) =>
             </Button>
         </Table.Cell>
     </Table.Row>
+}
 
 
 Logdiv.propTypes = {
