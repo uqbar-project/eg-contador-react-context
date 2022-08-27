@@ -4,7 +4,7 @@ import { Button, Container, Label } from 'semantic-ui-react'
 import { Context } from '../context/Context'
 
 const color = (valor) => {
-  if (valor === 0) return 'gray'
+  if (valor === 0) return 'grey'
   return valor > 0 ? 'green' : 'red'
 }
 

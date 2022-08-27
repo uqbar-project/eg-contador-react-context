@@ -22,7 +22,9 @@ const LogContador = () => {
                             <Table.HeaderCell></Table.HeaderCell>
                         </Table.Row>
                     </Table.Header>
-                    {logs.map((log) => <Logdiv log={log} key={log.id} />)}
+                    <Table.Body>
+                        {logs.map((log) => <Logdiv log={log} key={log.id} />)}
+                    </Table.Body>
                 </Table>
             </div>
         </Container>
@@ -47,5 +49,5 @@ const Logdiv = ({ log }) => {
 
 Logdiv.propTypes = {
     deleteLog: PropTypes.node,
-    log: PropTypes.node,
+    log: PropTypes.object,
 }
