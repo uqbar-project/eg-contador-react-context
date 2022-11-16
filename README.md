@@ -3,7 +3,7 @@
 
 [![Build React App](https://github.com/uqbar-project/eg-contador-react-context/actions/workflows/build.yml/badge.svg?branch=master)](https://github.com/uqbar-project/eg-contador-react-context/actions/workflows/build.yml) ![coverage](./badges/coverage/coverage.svg)
 
-![video](readme_src/demo2.gif)
+![video](images/demo2.gif)
 
 ## La aplicación
 
@@ -18,8 +18,6 @@ Antes de comenzar con los conceptos más salientes, la UI fue hecha con los comp
 El API de React Context permite unificar el estado entre los componentes de una aplicación.
 
 ### Breve introducción a React Context
-
-![image](readme_src/context.jpeg)
 
 React Context agrega como conceptos:
 
@@ -38,7 +36,7 @@ Tenemos tres componentes en nuestra aplicación:
 - **LogContador:** el container general que genera la tabla y su encabezado, y trabaja con la lista de logs de las operaciones que se van produciendo
 - **LogRow:** el componente que sabe mostrar un log dentro de una tabla
 
-![image](readme_src/componentes2.png)
+![image](images/componentes2.png)
 
 ## Nuestro estado compartido
 
