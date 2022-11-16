@@ -50,49 +50,61 @@ export const Context = createContext()
 
 ## Definiendo nuestro propio Provider
 
-Tendremos tres acciones: subir un valor, bajar un valor (ambas generan un nuevo log) y eliminar un log. Nuestro componente provider es simplemente un componente react, encargado de mantener y manejar el estado de nuestra app.
+Tendremos tres acciones: subir un valor, bajar un valor (ambas generan un nuevo log) y eliminar un log. Nuestro componente provider es simplemente un componente react, encargado de mantener y manejar el estado de nuestra app. Va a tener estado:
+
+- el valor actual
+- los logs
 
 archivo _src/context/Context.js_
 
-```javascript
-export class Provider extends React.Component {
-    state = {
-        logs: [],
-        count: 0
-    }
-    decrement = () => {
-        this.setState({
-            logs: this.state.logs.concat(new Log('DECREMENT')),
-            count: this.state.count - 1
-        })
-    }
-    increment = () => {
-        this.setState({
-            logs: this.state.logs.concat(new Log('INCREMENT')),
-            count: this.state.count + 1
-        })
-    }
-    deleteLog = (logToDelete) => {
-        const newLogs = this.state.logs.filter((log) => logToDelete.id !== log.id)
-        this.setState({
-            logs: newLogs
-        })
-    }
-    render() {
-        const value = {
-            count: this.state.count,
-            logs: this.state.logs,
-            decrement: this.decrement,
-            increment: this.increment,
-            deleteLog: this.deleteLog
-        }
-        return (
-            <Context.Provider value={value}>
-                {this.props.children}
-            </Context.Provider>
+```js
+export const Provider = ({ children }) => {
+  const [count, setCount] = useState(0)
+  const [logs, setLogs] = useState([])
+```
 
-        )
+El contexto publica en una referencia value lo que podemos luego utilizar en los componentes que trabajen con ese contexto:
+
+- el valor actual (el getter)
+- la lista de logs (solo el getter nuevamente)
+- y funciones para subir y bajar el valor
+- y una función que elimine el log
+
+```js
+  const addLog = (action) => {
+    const newLogs = logs.concat(new Log(action))
+    setLogs(newLogs)
+  }
+
+  const value = {
+    // Publicamos el estado
+    count,
+    logs,
+    // Funciones que afectan al estado
+    decrement: () => {
+      addLog('DECREMENT')
+      setCount(count - 1)
+    },
+    increment: () => {
+      addLog('INCREMENT')
+      setCount(count + 1)
+    },
+    deleteLog: (logToDelete) => {
+      // fíjense que el context está tomando una responsabilidad
+      const newLogs = logs.filter((log) => logToDelete.id !== log.id)
+      setLogs(newLogs)
     }
+  }
+```
+
+Por último devuelve un componente React que trabaja con la `prop children` porque el Context va a decorar (envolver, wrappear) los componentes que lo utilicen:
+
+```js
+  return (
+    <Context.Provider value={value}>
+      {children}
+    </Context.Provider>
+  )
 }
 ```
 
@@ -106,6 +118,18 @@ const App = () => (
   </Provider>
 )
 ```
+
+Un detalle respecto a los cambios de estado: es importante que todo cambio de estado modifique el objeto con el que se trabaja. En el agregado de un log, podemos utilizar el método push como alternativa, siempre que generemos una copia:
+
+```js
+  const addLog = (action) => {
+    const newLogs = [...logs]
+    newLogs.push(new Log(action))
+    setLogs(newLogs)
+  }
+```
+
+Si no hacemos la copia superficial `[...logs]`, los cambios no se distribuirán a los componentes hijos.
 
 ## Enlazando las acciones con cada componente
 
@@ -142,7 +166,7 @@ Entonces podemos usar libremente en nuestra función render las referencias coun
 En el componente LogContador mapearemos:
 
 - como **state del context** la propiedad logs
-- como **accion**, la funcion de borrar un log que recibe por parametro el log..
+- como **acción**, la funcion de borrar un log que recibe por parametro el log..
 
 ```js
 const { deleteLog, logs } = useContext(Context)
@@ -161,23 +185,23 @@ Hablaremos de los tests más interesantes, el resto pueden consultarse en [App.t
 
 ```js
 test('si se presiona el botón +, se agrega un log', () => {
-  const { getByTestId, getAllByTestId } = render(
+  render(
     <Provider>
       <App />
     </Provider>
   )
-  fireEvent.click(getByTestId('button_plus'))
-  expect(getAllByTestId('LogRow')).toHaveLength(1)
+  fireEvent.click(screen.getByTestId('button_plus'))
+  expect(screen.getAllByTestId('LogRow')).toHaveLength(1)
 })
 
 test('si se presiona el botón +, el contador pasa a estar en 1', () => {
-  const { getByTestId } = render(
+  render(
     <Provider>
       <App />
     </Provider>
   )
-  fireEvent.click(getByTestId('button_plus'))
-  expect(getByTestId('contador')).toHaveTextContent('1')
+  fireEvent.click(screen.getByTestId('button_plus'))
+  expect(screen.getByTestId('contador')).toHaveTextContent('1')
 })
 ```
 
@@ -190,10 +214,8 @@ Fíjense que elegimos repetir las dos líneas de código que forman parte del Ar
 
 ```js
 describe('si se presiona el botón -', () => {
-  let resultApp
-
   beforeEach(() => {
-    resultApp = render(
+    render(
       <Provider>
         <App />
       </Provider>
@@ -202,18 +224,16 @@ describe('si se presiona el botón -', () => {
   })
 
   test('se agrega un log', () => {
-    const { getAllByTestId } = resultApp
-    expect(getAllByTestId('LogRow')).toHaveLength(1)
+    expect(screen.getAllByTestId('LogRow')).toHaveLength(1)
   })
 
   test('el contador pasa a estar en -1', () => {
-    const { getByTestId } = resultApp
-    expect(getByTestId('contador')).toHaveTextContent('-1')
+    expect(screen.getByTestId('contador')).toHaveTextContent('-1')
   })
 })
 ```
 
-En definitiva, aquí hay un _trade off_ entre cierta repetición y la legibilidad del test mismo. Por el momento, dado que son solo dos líneas, nos quedamos con la idea original.
+y la razón para no hacerlo es que **el linter explícitamente se queja si intentamos llamar a la función render dentro del beforeEach (es una práctica desaconsejada)**.
 
 ### Delete del log
 
@@ -221,16 +241,16 @@ Y el último test es una prueba end-to-end bastante exhaustiva: el usuario presi
 
 ```js
 test('cuando el usuario presiona el botón Delete Log se elimina un log', () => {
-  const { queryAllByTestId, getByTestId } = render(
+  render(
     <Provider>
       <App />
     </Provider>
   )
   const actualIndex = Log.getLastIndex()
-  fireEvent.click(getByTestId('button_plus'))
-  expect(queryAllByTestId('LogRow')).toHaveLength(1)
-  fireEvent.click(getByTestId('button_deleteLog_' + actualIndex))
-  expect(queryAllByTestId('LogRow')).toHaveLength(0)
+  fireEvent.click(screen.getByTestId('button_plus'))
+  expect(screen.queryAllByTestId('LogRow')).toHaveLength(1)
+  fireEvent.click(screen.getByTestId('button_deleteLog_' + actualIndex))
+  expect(screen.queryAllByTestId('LogRow')).toHaveLength(0)
 })
 ```
 
