@@ -2,35 +2,28 @@ import { fireEvent, render, screen } from '@testing-library/react'
 import React from 'react'
 
 import App from './App'
-import { Provider } from './context/Context'
 import { Log } from './domain/log'
 
 // https://www.polvara.me/posts/mocking-context-with-react-testing-library/
 
 test('el contador inicialmente está en 0', () => {
   render(
-    <Provider>
-      <App />
-    </Provider>
-  )
+    <App />
+)
   expect(screen.getByTestId('contador')).toHaveTextContent('0')
 })
 
 test('si se presiona el botón +, se agrega un log', () => {
   render(
-    <Provider>
-      <App />
-    </Provider>
-  )
+    <App />
+)
   fireEvent.click(screen.getByTestId('button_plus'))
   expect(screen.getAllByTestId('LogRow')).toHaveLength(1)
 })
 
 test('si se presiona el botón +, el contador pasa a estar en 1', () => {
   render(
-    <Provider>
-      <App />
-    </Provider>
+    <App />
   )
   fireEvent.click(screen.getByTestId('button_plus'))
   expect(screen.getByTestId('contador')).toHaveTextContent('1')
@@ -38,9 +31,7 @@ test('si se presiona el botón +, el contador pasa a estar en 1', () => {
 
 test('si se presiona el botón -, se agrega un log', () => {
   render(
-    <Provider>
       <App />
-    </Provider>
   )
   fireEvent.click(screen.getByTestId('button_minus'))
   expect(screen.getAllByTestId('LogRow')).toHaveLength(1)
@@ -48,9 +39,7 @@ test('si se presiona el botón -, se agrega un log', () => {
 
 test('si se presiona el botón -, el contador pasa a estar en -1', () => {
   render(
-    <Provider>
-      <App />
-    </Provider>
+    <App />
   )
   fireEvent.click(screen.getByTestId('button_minus'))
   expect(screen.getByTestId('contador')).toHaveTextContent('-1')
@@ -59,9 +48,7 @@ test('si se presiona el botón -, el contador pasa a estar en -1', () => {
 
 test('cuando el usuario presiona el botón Delete Log se elimina un log', () => {
   render(
-    <Provider>
-      <App />
-    </Provider>
+    <App />
   )
   const actualIndex = Log.getLastIndex()
   fireEvent.click(screen.getByTestId('button_plus'))
