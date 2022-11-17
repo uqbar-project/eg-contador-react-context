@@ -186,9 +186,7 @@ Hablaremos de los tests más interesantes, el resto pueden consultarse en [App.t
 ```js
 test('si se presiona el botón +, se agrega un log', () => {
   render(
-    <Provider>
-      <App />
-    </Provider>
+    <App />
   )
   fireEvent.click(screen.getByTestId('button_plus'))
   expect(screen.getAllByTestId('LogRow')).toHaveLength(1)
@@ -196,9 +194,7 @@ test('si se presiona el botón +, se agrega un log', () => {
 
 test('si se presiona el botón +, el contador pasa a estar en 1', () => {
   render(
-    <Provider>
-      <App />
-    </Provider>
+    <App />
   )
   fireEvent.click(screen.getByTestId('button_plus'))
   expect(screen.getByTestId('contador')).toHaveTextContent('1')
@@ -216,9 +212,7 @@ Fíjense que elegimos repetir las dos líneas de código que forman parte del Ar
 describe('si se presiona el botón -', () => {
   beforeEach(() => {
     render(
-      <Provider>
-        <App />
-      </Provider>
+      <App />
     )
     fireEvent.click(resultApp.getByTestId('button_minus'))
   })
@@ -242,9 +236,7 @@ Y el último test es una prueba end-to-end bastante exhaustiva: el usuario presi
 ```js
 test('cuando el usuario presiona el botón Delete Log se elimina un log', () => {
   render(
-    <Provider>
-      <App />
-    </Provider>
+    <App />
   )
   const actualIndex = Log.getLastIndex()
   fireEvent.click(screen.getByTestId('button_plus'))
