@@ -1,4 +1,5 @@
-import React, { createContext,useState } from 'react'
+import { createContext,useState } from 'react'
+import PropTypes from 'prop-types'
 
 import { Log } from '../domain/log'
 
@@ -43,4 +44,8 @@ export const Provider = ({ children }) => {
       {children}
     </Context.Provider>
   )
+}
+
+Provider.propTypes = {
+  children: PropTypes.array
 }

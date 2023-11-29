@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import { useContext } from 'react'
 import { Button, Container, Label } from 'semantic-ui-react'
 
 import { Context } from '../context/Context'
