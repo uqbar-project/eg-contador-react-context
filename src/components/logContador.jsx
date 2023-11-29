@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types'
-import React, { useContext } from 'react'
+import { useContext } from 'react'
 import { Button, Container, Icon, Table } from 'semantic-ui-react'
 
 import { Context } from '../context/Context'
@@ -46,8 +46,6 @@ const Logdiv = ({ log }) => {
     </Table.Row>
 }
 
-
 Logdiv.propTypes = {
-    deleteLog: PropTypes.node,
     log: PropTypes.object,
 }
