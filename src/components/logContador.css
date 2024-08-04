@@ -1,0 +1,25 @@
+.logContainer {
+  margin: 0.5rem;
+}
+
+.header {
+  background-color: rgb(109, 153, 236);
+  padding: 1rem;
+  font-weight: bold;
+}
+
+.header, .body {
+  display: grid;
+  grid-template-columns: 3fr 1fr 1fr;
+  margin-bottom: 0.5rem;
+}
+
+hr {
+  color: gray;
+}
+
+.delete {
+  height: 2rem;
+  width: 2rem;
+  margin-top: -0.25rem;
+}

@@ -1,15 +1,22 @@
-import { createContext,useState } from 'react'
-import PropTypes from 'prop-types'
+import { createContext,ReactNode,useState } from 'react'
 
-import { Log } from '../domain/log'
+import { ActionLog, Log } from '../domain/log'
 
-export const Context = createContext()
+export type LogContext = {
+  count: number,
+  logs: Log[],
+  decrement: () => void,
+  increment: () => void,
+  deleteLog: (log: Log) => void,
+}
 
-export const Provider = ({ children }) => {
+export const Context = createContext<LogContext | null>(null)
+
+export const Provider = ({ children }: { children: ReactNode }) => {
   const [count, setCount] = useState(0)
-  const [logs, setLogs] = useState([])
+  const [logs, setLogs] = useState<Log[]>([])
 
-  const addLog = (action) => {
+  const addLog = (action: ActionLog) => {
     // También podemos hacer
     // const newLogs = [...logs]
     // newLogs.push(new Log(action))
@@ -25,14 +32,14 @@ export const Provider = ({ children }) => {
     logs,
     // Funciones que afectan al estado
     decrement: () => {
-      addLog('DECREMENT')
+      addLog(ActionLog.DECREMENT)
       setCount(count - 1)
     },
     increment: () => {
-      addLog('INCREMENT')
+      addLog(ActionLog.INCREMENT)
       setCount(count + 1)
     },
-    deleteLog: (logToDelete) => {
+    deleteLog: (logToDelete: Log) => {
       // fíjense que el context está tomando una responsabilidad
       const newLogs = logs.filter((log) => logToDelete.id !== log.id)
       setLogs(newLogs)
@@ -44,8 +51,4 @@ export const Provider = ({ children }) => {
       {children}
     </Context.Provider>
   )
-}
-
-Provider.propTypes = {
-  children: PropTypes.array
 }

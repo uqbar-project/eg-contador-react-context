@@ -1,0 +1,34 @@
+.container {
+  text-align: center;
+}
+
+h2 {
+  font-size: 2rem;
+}
+
+label {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin: 0.5rem 0;
+}
+
+.contador {
+  display: flex;
+  flex-direction: row;
+  gap: 2rem;
+  justify-content: center;
+}
+
+.primary, .secondary {
+  height: 3rem;
+  width: 3rem;
+  font-weight: bold;
+}
+
+.primary {
+  background-color: cornflowerblue;
+}
+
+.secondary {
+  background-color: coral;
+}
