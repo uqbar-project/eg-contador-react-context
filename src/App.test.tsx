@@ -18,8 +18,7 @@ describe('tests del contador', () => {
     render(
       <App />
   )
-    fireEvent
-    .click(screen.getByTestId('button_plus'))
+    fireEvent.click(screen.getByTestId('button_plus'))
     expect(screen.getAllByTestId('LogRow')).toHaveLength(1)
   })
   
