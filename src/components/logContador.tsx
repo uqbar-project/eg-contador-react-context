@@ -35,7 +35,7 @@ const Logdiv = ({ log }: { log: Log }) => {
       <div>{log.when.toLocaleString('es-AR')}</div>
       <div data-testid="LogRow">{log.action}</div>
       <div>
-        <img src="./src/assets/delete.jpg" data-testid={`button_deleteLog_${log.id}`} onClick={() => deleteLog(log)} className="delete" title="Eliminar log"/>
+        <img src="./src/assets/delete.png" data-testid={`button_deleteLog_${log.id}`} onClick={() => deleteLog(log)} className="delete" title="Eliminar log"/>
       </div>
     </div>
     <hr/>

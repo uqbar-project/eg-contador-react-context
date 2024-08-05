@@ -3,7 +3,7 @@
 
 [![Build React App](https://github.com/uqbar-project/eg-contador-react-context/actions/workflows/build.yml/badge.svg?branch=master)](https://github.com/uqbar-project/eg-contador-react-context/actions/workflows/build.yml) [![codecov](https://codecov.io/gh/uqbar-project/eg-contador-react-context/graph/badge.svg?token=42JI8APW8Q)](https://codecov.io/gh/uqbar-project/eg-contador-react-context)
 
-![video](video/demo2024.gif)
+![video](video/demo.gif)
 
 ## La aplicación
 
