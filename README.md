@@ -46,7 +46,7 @@ export const Context = createContext<LogContext | null>(null)
 
 ## Definiendo nuestro propio Provider
 
-Tendremos tres acciones: subir un valor, bajar un valor (ambas generan un nuevo log) y eliminar un log. Nuestro componente provider es simplemente un componente react, encargado de mantener y manejar el estado de nuestra app. Va a tener estado:
+Tendremos tres acciones: subir un valor, bajar un valor (ambas generan un nuevo log) y eliminar un log. Nuestro componente provider es simplemente un componente react, encargado de mantener y actualizar el estado de la  app:
 
 - el valor actual
 - los logs
