@@ -17,8 +17,8 @@ export default defineConfig({
     globals: true,
     environment: 'jsdom',
     coverage: {
-      exclude: [ './src/main.tsx', '**/*.cjs', '**/*.d.ts', 'vite.config.ts' ],
       reporter: ['lcov', 'json', 'html', 'json-summary'],
+      exclude: [ './src/main.tsx', '**/*.cjs', '**/*.d.ts', 'vite.config.ts' ],
     },
   }
 })

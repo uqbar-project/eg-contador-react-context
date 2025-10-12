@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 let lastIndex = 1
 
 export enum ActionLog {
