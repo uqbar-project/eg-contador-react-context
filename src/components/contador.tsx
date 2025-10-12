@@ -16,9 +16,9 @@ const Contador = () => {
         Contador
       </h2>
       <div className="contador">
-        <button data-testid="button_minus" className="secondary" onClick={decrement}>-</button>
+        <button data-testid="button_minus" className="secondary" onClick={decrement} title="Restar uno">-</button>
         <label data-testid="contador">{count}</label>
-        <button data-testid="button_plus" className="primary" onClick={increment}>+</button>
+        <button data-testid="button_plus" className="primary" onClick={increment} title="Sumar uno">+</button>
       </div>
     </div>
   )

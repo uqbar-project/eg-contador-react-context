@@ -23,3 +23,8 @@ hr {
   width: 2rem;
   margin-top: -0.25rem;
 }
+
+img:hover {
+  cursor: pointer;
+  filter: brightness(0.8);
+}
