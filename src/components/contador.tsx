@@ -5,20 +5,35 @@ import { useContext } from 'react'
 import { Context } from '../context/Context'
 
 const Contador = () => {
-  const { count, decrement, increment } = useContext(Context)!
-
-  // para usarlo en un componente como clase, se puede ver 
-  // https://medium.com/noders/manejo-de-estado-con-context-y-hooks-en-react-7adfc7a740a3
+  const context = useContext(Context)
+  if (!context) {
+    return null
+  }
+  const { count, increment, decrement } = context
 
   return (
     <div className="container">
-      <h2>
-        Contador
-      </h2>
+      <h2>Contador</h2>
       <div className="contador">
-        <button data-testid="button_minus" className="secondary" onClick={decrement} title="Restar uno">-</button>
-        <label data-testid="contador">{count}</label>
-        <button data-testid="button_plus" className="primary" onClick={increment} title="Sumar uno">+</button>
+        <button
+          type="button"
+          data-testid="button_minus"
+          className="secondary"
+          onClick={decrement}
+          title="Restar uno"
+        >
+          -
+        </button>
+        <span data-testid="contador">{count}</span>
+        <button
+          type="button"
+          data-testid="button_plus"
+          className="primary"
+          onClick={increment}
+          title="Sumar uno"
+        >
+          +
+        </button>
       </div>
     </div>
   )

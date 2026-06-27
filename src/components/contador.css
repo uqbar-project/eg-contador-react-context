@@ -6,29 +6,64 @@ h2 {
   font-size: 2rem;
 }
 
-label {
+.contador span {
   font-size: 1.5rem;
   font-weight: bold;
   margin: 0.5rem 0;
+  min-width: 3rem;
+  display: inline-block;
 }
 
 .contador {
   display: flex;
   flex-direction: row;
-  gap: 2rem;
+  gap: 1.5rem;
   justify-content: center;
+  align-items: center;
 }
 
-.primary, .secondary {
-  height: 3rem;
-  width: 3rem;
+.primary,
+.secondary {
+  height: 3.5rem;
+  width: 3.5rem;
+  font-size: 1.5rem;
   font-weight: bold;
+  border: none;
+  border-radius: 999px;
+  transition:
+    filter 0.2s,
+    transform 0.1s;
+}
+
+.primary:hover,
+.secondary:hover {
+  filter: brightness(1.2);
+  transform: scale(1.05);
+}
+
+.primary:active,
+.secondary:active {
+  transform: scale(0.95);
 }
 
 .primary {
-  background-color: cornflowerblue;
+  background-color: #4fc3f7;
+  color: #1a1a2e;
 }
 
 .secondary {
-  background-color: coral;
+  background-color: #ef5350;
+  color: #ffffff;
+}
+
+@media (prefers-color-scheme: light) {
+  .primary {
+    background-color: #1976d2;
+    color: #ffffff;
+  }
+
+  .secondary {
+    background-color: #d32f2f;
+    color: #ffffff;
+  }
 }
