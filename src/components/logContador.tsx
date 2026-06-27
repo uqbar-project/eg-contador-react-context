@@ -1,6 +1,7 @@
 import { useContext } from 'react'
 import './logContador.css'
 
+import deleteIcon from '../assets/delete.png'
 import { Context } from '../context/Context'
 import type { Log } from '../domain/log'
 
@@ -53,7 +54,7 @@ const Logdiv = ({ log }: { log: Log }) => {
           className="delete"
           title="Eliminar log"
         >
-          <img src="./src/assets/delete.png" alt="Eliminar log" />
+          <img src={deleteIcon} alt="Eliminar log" />
         </button>
       </td>
     </tr>
