@@ -1,43 +1,61 @@
+import { useContext } from 'react'
 import './logContador.css'
 
-import { useContext } from 'react'
-
 import { Context } from '../context/Context'
-import { Log } from 'src/domain/log'
+import type { Log } from '../domain/log'
 
 const LogContador = () => {
-  const { logs } = useContext(Context)!
+  const context = useContext(Context)
+  if (!context) {
+    return null
+  }
+  const { logs } = context
   return (
     <div className="logContainer">
       <div>
-        <h3>
-          Log de acciones
-        </h3>
+        <h3>Log de acciones</h3>
       </div>
-      <div className="table">
-        <div className="header">
-          <div>Cuándo</div>
-          <div>Acción</div>
-          <div></div>
-        </div>
-        {logs.map((log) => <Logdiv log={log} key={log.id} />)}
-      </div>
+      <table className="table">
+        <thead>
+          <tr className="header">
+            <th scope="col">Cuándo</th>
+            <th scope="col">Acción</th>
+            <th scope="col"></th>
+          </tr>
+        </thead>
+        <tbody>
+          {logs.map((log) => (
+            <Logdiv log={log} key={log.id} />
+          ))}
+        </tbody>
+      </table>
     </div>
   )
 }
 export default LogContador
 
 const Logdiv = ({ log }: { log: Log }) => {
-  const { deleteLog } = useContext(Context)!
+  const context = useContext(Context)
+  if (!context) {
+    return null
+  }
+  const { deleteLog } = context
 
-  return <>
-    <div className="body">
-      <div>{log.when.toLocaleString('es-AR')}</div>
-      <div data-testid="LogRow">{log.action}</div>
-      <div>
-        <img src="./src/assets/delete.png" data-testid={`button_deleteLog_${log.id}`} onClick={() => deleteLog(log)} className="delete" title="Eliminar log"/>
-      </div>
-    </div>
-    <hr/>
-  </>
+  return (
+    <tr className="body">
+      <td>{log.when.toLocaleString('es-AR')}</td>
+      <td data-testid="LogRow">{log.action}</td>
+      <td>
+        <button
+          type="button"
+          data-testid={`button_deleteLog_${log.id}`}
+          onClick={() => deleteLog(log)}
+          className="delete"
+          title="Eliminar log"
+        >
+          <img src="./src/assets/delete.png" alt="Eliminar log" />
+        </button>
+      </td>
+    </tr>
+  )
 }

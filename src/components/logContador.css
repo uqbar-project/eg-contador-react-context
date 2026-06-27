@@ -2,29 +2,84 @@
   margin: 0.5rem;
 }
 
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
 .header {
-  background-color: rgb(109, 153, 236);
-  padding: 1rem;
-  font-weight: bold;
+  background-color: #3a4a6b;
+  color: #ffffff;
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: 0.85rem;
+  letter-spacing: 0.05em;
 }
 
-.header, .body {
-  display: grid;
-  grid-template-columns: 3fr 1fr 1fr;
-  margin-bottom: 0.5rem;
+.header th {
+  padding: 0.75rem 1rem;
+  text-align: left;
 }
 
-hr {
-  color: gray;
+.body td {
+  padding: 0.75rem 1rem;
+}
+
+.body:nth-child(even) {
+  background-color: rgba(255, 255, 255, 0.03);
+}
+
+.body:hover {
+  background-color: rgba(255, 255, 255, 0.06);
 }
 
 .delete {
   height: 2rem;
   width: 2rem;
-  margin-top: -0.25rem;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background-color 0.2s;
 }
 
-img:hover {
-  cursor: pointer;
+.delete:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.delete img {
+  height: 2rem;
+  width: 2rem;
+  display: block;
+}
+
+.delete:hover img {
   filter: brightness(0.8);
+}
+
+@media (prefers-color-scheme: light) {
+  .table {
+    border: 1px solid rgba(0, 0, 0, 0.12);
+  }
+
+  .header {
+    background-color: #5c7bbd;
+    color: #ffffff;
+  }
+
+  .body:nth-child(even) {
+    background-color: rgba(0, 0, 0, 0.03);
+  }
+
+  .body:hover {
+    background-color: rgba(0, 0, 0, 0.06);
+  }
+
+  .delete:hover {
+    background-color: rgba(0, 0, 0, 0.06);
+  }
 }

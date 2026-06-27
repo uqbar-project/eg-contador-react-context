@@ -1,13 +1,13 @@
 import { createContext } from 'react'
 
-import { Log } from '../domain/log'
+import type { Log } from '../domain/log'
 
 export type LogContext = {
-  count: number,
-  logs: Log[],
-  decrement: () => void,
-  increment: () => void,
-  deleteLog: (log: Log) => void,
+  count: number
+  logs: Log[]
+  decrement: () => void
+  increment: () => void
+  deleteLog: (log: Log) => void
 }
 
 export const Context = createContext<LogContext | null>(null)

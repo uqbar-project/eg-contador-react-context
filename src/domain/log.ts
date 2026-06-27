@@ -7,7 +7,6 @@ export enum ActionLog {
 }
 
 export class Log {
-
   public id: number
   public when: Date
 
@@ -19,5 +18,4 @@ export class Log {
   static getLastIndex() {
     return lastIndex
   }
-
 }
